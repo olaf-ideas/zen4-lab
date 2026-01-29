@@ -32,17 +32,24 @@ int main(int argc, char *argv[]) {
   for (int i = 0; i < n * n; i++) {
     a[i] = dist(rng);
     b[i] = dist(rng);
+    c[i] = 0;
+    v[i] = 0;
   }
   
   matmul(a, b, c, n);
   naive(a, b, v, n);
 
   for (int i = 0; i < n * n; i++) {
-    float diff = c[i] - v[i];
-    assert(abs(diff) / fmax(1, diff) < 1E-6);
+    f32 diff = c[i] - v[i];
+    assert(fabs(diff / fmax(1, fabs(v[i]))) < 1E-5);
   }
 
   std::cout << "OK\n";
+
+  delete[] v;
+  delete[] c;
+  delete[] b;
+  delete[] a;
 
   return 0;
 }

@@ -22,11 +22,12 @@ int main(int argc, char *argv[]) {
   f32 *c = new f32[n*n];
 
   std::mt19937 rng(2137);
-  std::uniform_real_distribution<f32> dist(-1, +1);
+  std::uniform_real_distribution<f32> dist(0, +1);
 
   for (int i = 0; i < n * n; i++) {
     a[i] = dist(rng);
     b[i] = dist(rng);
+    c[i] = 0;
   }
   
   u32 laps = 0;
@@ -42,8 +43,14 @@ int main(int argc, char *argv[]) {
 
   u64 avg_cycles = (t1 - t0 + laps - 1) / laps;
 
-  std::cout << std::setw(15) << std::left << "avg cycles: "
-            << std::setw(12) << std::right << avg_cycles << std::endl;
+  std::cout << std::setw(15) << std::left << "cycles: "
+            << std::setw(12) << std::right << avg_cycles << ' '
+            << std::setw(10) << std::left << "  laps: "
+            << std::setw(10) << std::right << laps << std::endl;
+
+  delete[] c;
+  delete[] b;
+  delete[] a;
 
   return 0;
 }

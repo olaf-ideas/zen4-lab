@@ -1,35 +1,41 @@
 CXX := g++
 
-CXX_FLAGS := -std=c++20 -O3 -march=native -mtune=native
+CXXFLAGS := -std=c++20 -O3 -march=znver4 -mtune=znver4
+ASMFLAGS := -fno-omit-frame-pointer -fverbose-asm -g3
 
 SRCS := $(wildcard matmul*.cpp)
 BASE := $(basename $(SRCS))
 
+BUILD := build
+
 n ?= 128 256 512 1024 2048
 t ?= 1073741824 # = 1<<30
 
-%.test: %.cpp test.cpp matmul.hpp
-	$(CXX) $(CXXFLAGS) $< test.cpp -o $@
+$(BUILD)/%.test: %.cpp test.cpp matmul.hpp | $(BUILD)
+	$(CXX) $(CXXFLAGS) $< test.cpp -o $@ -fsanitize=undefined,address -Wall -Wshadow -pedantic
 
-%.bench: %.cpp bench.cpp matmul.hpp
+$(BUILD)/%.bench: %.cpp bench.cpp matmul.hpp | $(BUILD)
 	$(CXX) $(CXXFLAGS) $< bench.cpp -o $@
 
-test: $(addsuffix .test, $(BASE))
+$(BUILD)/%.s: %.cpp bench.cpp matmul.hpp | $(BUILD)
+	$(CXX) $(CXXFLAGS) $(ASMFLAGS) -S $< -o $@
+
+test: $(addprefix $(BUILD)/,$(addsuffix .test,$(BASE)))
 	@set -e; \
 	for exe in $^; do \
 		echo "==> $$exe"; \
 		./$$exe; \
 	done
 
-bench: $(addsuffix .bench, $(BASE))
+bench: $(addprefix $(BUILD)/,$(addsuffix .bench,$(BASE)))
 	@set -e; \
 	for exe in $^; do \
 		echo "==> $$exe"; \
 		for N in $(n); do \
 			printf "n=%4d  " $$N; \
 			./$$exe $$N $(t); \
-		done \
+		done; \
 	done
 
 clean:
-	rm -f *.test *.bench
+	rm -rf $(BUILD)
