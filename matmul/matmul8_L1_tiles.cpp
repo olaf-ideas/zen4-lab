@@ -28,11 +28,11 @@ void matmul(const float *a, const float *b, float *__restrict__ c, int n) {
   alignas(64) static float C[MAX_N * MAX_N];
 
   for (u32 i = 0; i < n; i++) {
-    memcpy(A + i * ni, a + i * n, sizeof(float) * n);
-    memcpy(B + i * nk, b + i * n, sizeof(float) * n);
+    memcpy(A + i * nk, a + i * n, sizeof(float) * n);
+    memcpy(B + i * nj, b + i * n, sizeof(float) * n);
   }
 
-  memset(C, 0, sizeof(float) * n);
+  memset(C, 0, sizeof(float) * ni * nj);
 
   for (u32 i = 0; i < ni; i += BI) {
     for (u32 k = 0; k < nk; k += BK) {
@@ -44,7 +44,7 @@ void matmul(const float *a, const float *b, float *__restrict__ c, int n) {
               u32 i3 = i + i2;
               u32 j3 = j + j2;
               u32 k3 = k + k2;
-              C[i3*ni + j3] += A[i3*ni + k3] * B[k3*nk + j3];
+              C[i3*nj + j3] += A[i3*nk + k3] * B[k3*nj + j3];
             }
           }
         }

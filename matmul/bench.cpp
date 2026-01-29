@@ -15,7 +15,7 @@ using u64 = std::uint64_t;
 
 int main(int argc, char *argv[]) {
   int n = (argc > 1 ? std::atoi(argv[1]) : 512);
-  u64 d = (argc > 2 ? std::atoll(argv[2]) : (1 << 30));
+  u64 d = (argc > 2 ? std::atoll(argv[2]) : (1ULL << 32));
 
   f32 *a = new f32[n*n];
   f32 *b = new f32[n*n];

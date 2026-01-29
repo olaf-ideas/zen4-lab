@@ -32,7 +32,7 @@ void matmul(const float *a, const float *b, float *__restrict__ c, int n) {
     memcpy(B + i * nk, b + i * n, sizeof(float) * n);
   }
 
-  memset(C, 0, sizeof(float) * n);
+  memset(C, 0, sizeof(float) * ni * nj);
 
   for (u32 i = 0; i < ni; i += BI) {
     for (u32 k = 0; k < nk; k += BK) {

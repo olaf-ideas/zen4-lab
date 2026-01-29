@@ -13,8 +13,8 @@ void matmul(const f32 *a, const f32 *b, f32 *__restrict__ c, int n) {
 
   const int m = (n + 15) / 16;
 
-  alignas(16) static f32x16 A[MAX_N * MAX_N / 16];
-  alignas(16) static f32x16 B[MAX_N * MAX_N / 16];
+  alignas(64) static f32x16 A[MAX_N * MAX_N / 16];
+  alignas(64) static f32x16 B[MAX_N * MAX_N / 16];
 
   memset(A, 0, 4 * 16 * n * m); 
   memset(B, 0, 4 * 16 * n * m);
