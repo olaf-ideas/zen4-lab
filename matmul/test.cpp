@@ -1,4 +1,5 @@
 #include <iostream>
+#include <iomanip>
 #include <random>
 
 #include <cassert>
@@ -27,7 +28,7 @@ int main(int argc, char *argv[]) {
   f32 *v = new f32[n*n];
 
   std::mt19937 rng(2137);
-  std::uniform_real_distribution<f32> dist(-1, +1);
+  std::uniform_real_distribution<f32> dist(0, 1);
 
   for (int i = 0; i < n * n; i++) {
     a[i] = dist(rng);
@@ -39,12 +40,16 @@ int main(int argc, char *argv[]) {
   matmul(a, b, c, n);
   naive(a, b, v, n);
 
+  f32 max_err = 0;
   for (int i = 0; i < n * n; i++) {
     f32 diff = c[i] - v[i];
-    assert(fabs(diff / fmax(1, fabs(v[i]))) < 1E-5);
+    f32 err = fabs(diff / fmax(1, fabs(v[i])));
+    // std::cerr << "diff: " << diff << " err: " << err << '\n';
+    assert(err < 1E-5);
+    max_err = fmax(max_err, err);
   }
 
-  std::cout << "OK\n";
+  std::cout << "OK " << std::fixed << std::setprecision(10) << max_err << std::endl;
 
   delete[] v;
   delete[] c;

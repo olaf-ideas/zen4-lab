@@ -1,6 +1,6 @@
 CXX := g++
 
-CXXFLAGS := -std=c++20 -O3 -march=znver4 -mtune=znver4
+CXXFLAGS := -std=c++20 -O2 -march=znver4 -mtune=znver4 -g
 ASMFLAGS := -fno-omit-frame-pointer -fverbose-asm -g3
 
 SRCS := $(wildcard matmul*.cpp)
@@ -9,7 +9,10 @@ BASE := $(basename $(SRCS))
 BUILD := build
 
 n ?= 128 256 512 1024 2048
-t ?= 1073741824 # = 1<<30
+t ?= 4294967296 # = 1<<32
+
+$(BUILD):
+	mkdir -p $(BUILD)
 
 $(BUILD)/%.test: %.cpp test.cpp matmul.hpp | $(BUILD)
 	$(CXX) $(CXXFLAGS) $< test.cpp -o $@ -fsanitize=undefined,address -Wall -Wshadow -pedantic
