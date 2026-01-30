@@ -1,6 +1,6 @@
 CXX := g++
 
-CXXFLAGS := -std=c++20 -O3 -march=znver4 -mtune=znver4 -g -I/usr/include/openblas -fopenmp -lopenblas
+CXXFLAGS := -std=c++20 -O1 -march=znver4 -mtune=znver4 -g -I/usr/include/openblas -fopenmp -lopenblas
 ASMFLAGS := -fno-omit-frame-pointer -fverbose-asm -g3
 
 SRCS := $(wildcard matmul*.cpp)

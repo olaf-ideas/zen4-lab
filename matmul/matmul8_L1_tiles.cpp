@@ -3,36 +3,38 @@
 #include <cstdint>
 #include <cstring>
 
+using f32 = float;
 using u32 = std::uint32_t;
 
-constexpr int L1 = 32 << 10;
-constexpr int L2 = 1 << 20;
-constexpr int L3 = 32 << 20;
+constexpr u32 L1 = 32 << 10;
+constexpr u32 L2 = 1 << 20;
+constexpr u32 L3 = 32 << 20;
 
-const int MAX_N = 2 << 10;
+constexpr u32 MAX_N = 2 << 10;
 
-constexpr int BI = 32;
-constexpr int BJ = 64;
-constexpr int BK = 64;
+constexpr u32 BI = 32;
+constexpr u32 BJ = 64;
+constexpr u32 BK = 64;
 
-static_assert(sizeof(float) * (BI*BK + BK*BJ + BI*BJ) == L1);
+static_assert(sizeof(f32) * (BI*BK + BK*BJ + BI*BJ) == L1);
 
-void matmul(const float *a, const float *b, float *__restrict__ c, int n) {
+void matmul(const f32 *a, const f32 *b, f32 *__restrict__ c, int _n) {
 
-  const int ni = ((n + BI - 1) / BI) * BI;
-  const int nj = ((n + BJ - 1) / BJ) * BJ;
-  const int nk = ((n + BK - 1) / BK) * BK;
+  const u32 n = _n;
+  const u32 ni = ((n + BI - 1) / BI) * BI;
+  const u32 nj = ((n + BJ - 1) / BJ) * BJ;
+  const u32 nk = ((n + BK - 1) / BK) * BK;
 
-  alignas(64) static float A[MAX_N * MAX_N];
-  alignas(64) static float B[MAX_N * MAX_N];
-  alignas(64) static float C[MAX_N * MAX_N];
+  alignas(64) static f32 A[MAX_N * MAX_N];
+  alignas(64) static f32 B[MAX_N * MAX_N];
+  alignas(64) static f32 C[MAX_N * MAX_N];
 
   for (u32 i = 0; i < n; i++) {
-    memcpy(A + i * nk, a + i * n, sizeof(float) * n);
-    memcpy(B + i * nj, b + i * n, sizeof(float) * n);
+    memcpy(A + i * nk, a + i * n, sizeof(f32) * n);
+    memcpy(B + i * nj, b + i * n, sizeof(f32) * n);
   }
 
-  memset(C, 0, sizeof(float) * ni * nj);
+  memset(C, 0, sizeof(f32) * ni * nj);
 
   for (u32 i = 0; i < ni; i += BI) {
     for (u32 k = 0; k < nk; k += BK) {
@@ -54,6 +56,6 @@ void matmul(const float *a, const float *b, float *__restrict__ c, int n) {
   }
 
   for (u32 i = 0; i < n; i++) {
-    memcpy(c + i*n, C + i*ni, sizeof(float) * n);
+    memcpy(c + i*n, C + i*ni, sizeof(f32) * n);
   }
 }

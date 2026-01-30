@@ -44,8 +44,15 @@ int main(int argc, char *argv[]) {
   for (int i = 0; i < n * n; i++) {
     f32 diff = c[i] - v[i];
     f32 err = fabs(diff / fmax(1, fabs(v[i])));
-    // std::cerr << "diff: " << diff << " err: " << err << '\n';
-    assert(err < 1E-5);
+    if (err > 1E-5) {
+      std::cerr << "n: " << n << '\n';
+      std::cerr << "diff: " << diff << " err: " << err << std::endl;
+      std::cerr << "i: " << i << std::endl;
+      std::cerr << "x: " << i % n << " y: " << i / n << std::endl;
+      std::cerr << "valid: " << v[i] << std::endl;
+      std::cerr << "given: " << c[i] << std::endl;
+      return 1;
+    }
     max_err = fmax(max_err, err);
   }
 
