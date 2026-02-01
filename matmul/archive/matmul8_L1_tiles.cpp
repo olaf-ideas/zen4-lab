@@ -30,8 +30,8 @@ void matmul(const f32 *a, const f32 *b, f32 *__restrict__ c, int _n) {
   alignas(64) static f32 C[MAX_N * MAX_N];
 
   for (u32 i = 0; i < n; i++) {
-    memcpy(A + i * nk, a + i * n, sizeof(f32) * n);
-    memcpy(B + i * nj, b + i * n, sizeof(f32) * n);
+    memcpy(A + i * ni, a + i * n, sizeof(f32) * n);
+    memcpy(B + i * nk, b + i * n, sizeof(f32) * n);
   }
 
   memset(C, 0, sizeof(f32) * ni * nj);
@@ -46,7 +46,7 @@ void matmul(const f32 *a, const f32 *b, f32 *__restrict__ c, int _n) {
               u32 i3 = i + i2;
               u32 j3 = j + j2;
               u32 k3 = k + k2;
-              C[i3*nj + j3] += A[i3*nk + k3] * B[k3*nj + j3];
+              C[i3*ni + j3] += A[i3*ni + k3] * B[k3*nk + j3];
             }
           }
         }

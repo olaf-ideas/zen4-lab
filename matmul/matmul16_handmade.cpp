@@ -32,22 +32,39 @@ static INLINE void kernel(
   u32 x, u32 y,
   u32 l, u32 r, 
   u32 n) {
-  alignas(64) f32x16 d[ROWS_KER][COLS_KER / 16]{};
-
+  
+  alignas(64) f32x16
+    d00{}, d01{},
+    d10{}, d11{},
+    d20{}, d21{},
+    d30{}, d31{};
+  
   for (u32 k = l; k < r; k++) {
-    for (u32 i = 0; i < ROWS_KER; i++) {
-      f32x16 alpha = _mm512_set1_ps(a[(x + i) * n + k]);
-      for (u32 j = 0; j < COLS_KER; j += 16) {
-        d[i][j / 16] += alpha * b[(k * n + y + j) / 16];
-      }
-    }
+    f32x16 b0 = f32x16{} + b[(k * n + y) / 16 + 0];
+    f32x16 b1 = f32x16{} + b[(k * n + y) / 16 + 1];
+
+  #define FMADD(i)\
+    f32x16 a##i = f32x16{} + a[(x + i) * n + k];\
+    d##i##0 += a##i * b0;\
+    d##i##1 += a##i * b1;
+
+    FMADD(0)
+    FMADD(1)
+    FMADD(2)
+    FMADD(3)
   }
 
-  for (u32 i = 0; i < ROWS_KER; i++) {
-    for (u32 j = 0; j < COLS_KER; j += 16) {
-      c[((x + i) * n + y + j) / 16] += d[i][j / 16];
-    }
-  }
+  #define SAVE(i,j)\
+    c[((x + i)*n + y) / 16 + j] += d##i##j;
+
+  SAVE(0,0)
+  SAVE(0,1)
+  SAVE(1,0)
+  SAVE(1,1)
+  SAVE(2,0)
+  SAVE(2,1)
+  SAVE(3,0)
+  SAVE(3,1)
 }
 
 template <u32 val>

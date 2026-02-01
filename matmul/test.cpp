@@ -51,6 +51,11 @@ int main(int argc, char *argv[]) {
       std::cerr << "x: " << i % n << " y: " << i / n << std::endl;
       std::cerr << "valid: " << v[i] << std::endl;
       std::cerr << "given: " << c[i] << std::endl;
+      
+      delete[] v;
+      delete[] c;
+      delete[] b;
+      delete[] a;
       return 1;
     }
     max_err = fmax(max_err, err);

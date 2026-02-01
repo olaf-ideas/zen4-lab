@@ -12,7 +12,7 @@ BASE := $(basename $(SRCS))
 
 BUILD := build
 
-n ?= 32 64 128 256 512 1024 2048 4096
+n ?= 12 32 64 128 256 336 512 666 712 1024 2048 4096
 t ?= 4294967296 # = 1<<32
 l ?= 64
 
@@ -30,7 +30,10 @@ test: $(addprefix $(BUILD)/,$(addsuffix .test,$(BASE)))
 	@set -e; \
 	for exe in $^; do \
 		echo "==> $$exe"; \
-		./$$exe; \
+		for N in $(n); do \
+			printf "n=%4d  " $$N; \
+			./$$exe $$N $(t) $(l); \
+		done; \
 	done
 
 bench: $(addprefix $(BUILD)/,$(addsuffix .bench,$(BASE)))
