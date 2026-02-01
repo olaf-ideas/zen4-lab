@@ -1,7 +1,7 @@
 #include <cstdlib>
 #include <immintrin.h>
 
-const int MAX_N = 2 << 10;
+const int MAX_N = 1 << 13;
 
 void matmul(const float *a, const float *b, float *__restrict__ c, int n) {
   

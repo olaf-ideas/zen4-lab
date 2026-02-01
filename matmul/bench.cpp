@@ -15,7 +15,8 @@ using u64 = std::uint64_t;
 
 int main(int argc, char *argv[]) {
   int n = (argc > 1 ? std::atoi(argv[1]) : 512);
-  u64 d = (argc > 2 ? std::atoll(argv[2]) : (1ULL << 32));
+  u64 t = (argc > 2 ? std::atoll(argv[2]) : (1ULL << 32));
+  u32 l = (argc > 3 ? std::atoi(argv[3]) : 64);
 
   f32 *a = new f32[n*n];
   f32 *b = new f32[n*n];
@@ -34,7 +35,7 @@ int main(int argc, char *argv[]) {
   u64 t0 = __rdtsc();
   u64 t1 = t0;
 
-  while (t1 - t0 < d) {
+  while (t1 - t0 < t && laps < l) {
     matmul(a, b, c, n);
     laps++;
   

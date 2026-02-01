@@ -2,6 +2,8 @@
 #include <immintrin.h>
 #include <cstdint>
 #include <cstring>
+#include <algorithm>
+#include <iostream>
 
 using u32 = std::uint32_t;
 using f32 = float;
@@ -12,13 +14,11 @@ constexpr u32 MAX_N = 1 << 12;
 // fma -> latency: 4 cycles, throughput: 2 per cycle
 // 32 zmm registers
 
-#ifndef ROWS_KER
-constexpr u32 ROWS_KER = 4;
-#endif
+#undef ROWS_KER
+#undef COLS_KER
 
-#ifndef COLS_KER
+constexpr u32 ROWS_KER = 4;
 constexpr u32 COLS_KER = 2 * 16;
-#endif
 
 constexpr u32 ROW_N = (MAX_N + ROWS_KER - 1) / ROWS_KER * ROWS_KER;
 constexpr u32 COL_N = (MAX_N + COLS_KER - 1) / COLS_KER * COLS_KER;
@@ -66,9 +66,21 @@ void matmul(const f32 *a, const f32 *b, f32 *__restrict__ c, int _n) {
     memcpy(B + (i * ny) / 16, b + i * n, 4 * n);
   }
 
-  for (u32 x = 0; x < n; x += ROWS_KER) {
-    for (u32 y = 0; y < n; y += COLS_KER) {
-      kernel(A, B, C, x, y, 0, n, ny);
+  const u32 s3 = std::min((32U << 10) / 4, (32 << 20) / (4 * n) / ROWS_KER * ROWS_KER);
+  const u32 s2 = (1  << 20) / (4 * n) / COLS_KER * COLS_KER;
+  const u32 s1 = (32 << 10) / (4 * s3);
+
+  // std::cerr << "s3: " << s3 << " s2: " << s2 << " s1: " << s1 << std::endl;
+
+  for (u32 i3 = 0; i3 < n; i3 += s3) {
+    for (u32 i2 = 0; i2 < n; i2 += s2) {
+      for (u32 i1 = 0; i1 < n; i1 += s1) {
+        for (u32 x = i2; x < std::min(i2 + s2, n); x += ROWS_KER) {
+          for (u32 y = i3; y < std::min(i3 + s3, n); y += COLS_KER) {
+            kernel(A, B, C, x, y, i1, std::min(i1 + s1, n), ny);
+          }
+        }
+      }
     }
   }
 

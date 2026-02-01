@@ -7,7 +7,7 @@ using u32 = std::uint32_t;
 using f32 = float;
 using f32x4 __attribute__ (( vector_size((16)) )) = f32;
 
-constexpr u32 MAX_N = 2 << 10;
+constexpr u32 MAX_N = 1 << 12;
 
 void matmul(const f32 *a, const f32 *b, f32 *__restrict__ c, int _n) {
 

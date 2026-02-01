@@ -10,7 +10,7 @@ constexpr u32 L1 = 32 << 10;
 constexpr u32 L2 = 1 << 20;
 constexpr u32 L3 = 32 << 20;
 
-constexpr u32 MAX_N = 2 << 10;
+constexpr u32 MAX_N = 1 << 12;
 
 constexpr u32 BI = 128;
 constexpr u32 BJ = 256;
