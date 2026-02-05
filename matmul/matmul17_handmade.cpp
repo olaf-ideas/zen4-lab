@@ -118,6 +118,6 @@ void matmul(const f32 *a, const f32 *b, f32 *__restrict__ c, int _n) {
   }
 
   for (u32 i = 0; i < n; i++) {
-    memcpy(c + (i * n), C + (i * ny) / 16, 4 * n);
+    memcpy(c + (i * n), C + (i * ny), 4 * n);
   }
 }
