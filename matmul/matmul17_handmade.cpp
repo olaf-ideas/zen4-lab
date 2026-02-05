@@ -19,7 +19,7 @@ constexpr u32 MAX_N = 1 << 12;
 #undef ROWS_KER
 #undef COLS_KER
 
-constexpr u32 ROWS_KER = 4;
+constexpr u32 ROWS_KER = 9;
 constexpr u32 COLS_KER = 2 * 16;
 
 constexpr u32 ROW_N = (MAX_N + ROWS_KER - 1) / ROWS_KER * ROWS_KER;
