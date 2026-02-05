@@ -79,9 +79,11 @@ void matmul(const f32 *__restrict__ a,
               }
             }
 
-            for (u32 k = 0; k < kc; k++) {
+            for (u32 k = 0; k < kc; k++) {          
+              #pragma unroll
               for (u32 i = 0; i < nr; i++) {
                 f32x16 b_reg = f32x16{} + B[i2 * kc + k * nr + i];
+                #pragma unroll
                 for (u32 j = 0; j < mr; j += 16) {
                   f32x16 a_reg = *(f32x16*)&A[i1 * kc + k * mr + j];
                   c_reg[i][j / 16] += a_reg * b_reg;
