@@ -18,9 +18,11 @@ int main(int argc, char *argv[]) {
   u64 t = (argc > 2 ? std::atoll(argv[2]) : (1ULL << 32));
   u32 l = (argc > 3 ? std::atoi(argv[3]) : 64);
 
-  f32 *a = new f32[n*n];
-  f32 *b = new f32[n*n];
-  f32 *c = new f32[n*n];
+  int m = (n + 3) / 4 * 4;
+
+  f32 *a = (f32*) std::aligned_alloc(64, sizeof(f32)*m*m);
+  f32 *b = (f32*) std::aligned_alloc(64, sizeof(f32)*m*m);
+  f32 *c = (f32*) std::aligned_alloc(64, sizeof(f32)*m*m);
 
   std::mt19937 rng(2137);
   std::uniform_real_distribution<f32> dist(0, +1);
@@ -49,9 +51,9 @@ int main(int argc, char *argv[]) {
             << std::setw(10) << std::left << "  laps: "
             << std::setw(10) << std::right << laps << std::endl;
 
-  delete[] c;
-  delete[] b;
-  delete[] a;
+  free(c);
+  free(b);
+  free(a);
 
   return 0;
 }

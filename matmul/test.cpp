@@ -67,6 +67,9 @@ int main(int argc, char *argv[]) {
       std::cerr << "Wrong err: " << err << std::endl;
       std::cerr << "> diffR: " << diffR << " errR: " << errR << " diffC: " << diffC << " errC: " << errC << std::endl;
       std::cerr << "i: " << i << std::endl;
+      std::cerr << "c: " << c[i] << std::endl;
+      std::cerr << "R: " << R[i] << std::endl;
+      std::cerr << "C: " << C[i] << std::endl;
       return 1;
     }
     max_err = fmax(max_err, err);
